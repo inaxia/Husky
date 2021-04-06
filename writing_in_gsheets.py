@@ -1,15 +1,10 @@
 import gspread
+from Private import private_keys
 
-service_account = gspread.service_account(filename="Google_Sheets_API.json")
-# google_sheets = service_account.open_by_url("https://docs.google.com/spreadsheets/d/173NGS50JENbm55SJ5zCgCRWorvCuTs9GtOEJl6-O1JM/edit#gid=0")
-google_sheets = service_account.open_by_key("173NGS50JENbm55SJ5zCgCRWorvCuTs9GtOEJl6-O1JM")
+service_account = gspread.service_account(filename="Private/Google_Sheets_API.json")
+google_sheets = service_account.open_by_key(private_keys.google_sheets_id)
 
-worksheet = google_sheets.worksheet("Sheet1")
+worksheet = google_sheets.worksheet("discord registrations")
 
-user = ['Priyansh', 20, 'Chindwara']
-
-# worksheet.insert_row(user, index=5) #* Insert user in row 3
-# worksheet.append_row(user) #* Add a new user below
-
-# worksheet.update_acell("B3", 20) #* Update a particular cell's data
-# worksheet.delete_rows(3) #* Deletes a specific row
+def add_a_person(user):
+    worksheet.append_row(user)
