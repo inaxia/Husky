@@ -12,13 +12,12 @@ def get_a_cell(cell):
 def is_available(email):
     user = []
     try:
-        data = worksheet.find("hardik.kumar18feb@gmail.com")
+        data = worksheet.find(email)
         user.append(True)
         user.append(data.row)
         user.append(data.col)
     except gspread.exceptions.CellNotFound:
         user.append(False)
-
     return user
 
 def get_user_data(row):

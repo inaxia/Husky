@@ -6,10 +6,11 @@ import writing_in_gsheets
 from Private import private_keys
 
 
+#? Setting Prefix
 Husky = commands.Bot(command_prefix="!")
 
 
-# Husky details
+#? Husky details
 husky_username = ""
 husky_avatar_url = ""
 
@@ -25,9 +26,12 @@ async def on_ready():
 #? Basic Registration Inforation
 @Husky.command()
 async def husky(ctx):
+
+    # Getting username
     username = str(ctx.author.name)
     print(f"\nusername: {username}")
 
+    # Creating embed
     embed = discord.Embed(
         title = "Woof! Hii there, I'm Husky",
         description = f"Hello **{username}**, I'm here to help you out with Registration Process."+
@@ -46,23 +50,30 @@ async def husky(ctx):
             +"\n\neg, **!register Husky | husky@gmail.com | +919876543210 | 4 | Delhi | India**",
         colour = 10181046 # Purple
     )
+
+    # Sending embed
     await ctx.send(embed = embed)
 
 
 #? Registrtion Process
 @Husky.command()
 async def register(ctx, *, text): # "*" will take the full sentence
+
+    # Getting timestamp & user avatar url
     timestamp = str(datetime.now()).split(" ")
     user_avatar_url = str(ctx.author.avatar_url)
 
+    # Splitting text to get a list of details
     user = text.split("|")
     for i in range(len(user)):
         user[i] = user[i].strip()
 
+    # Checking if user has alreay registered or not
     is_user_present = reading_from_gsheets.is_available(user[1])
     print(is_user_present)
 
-    if is_user_present[0]:
+    # If Already Registered
+    if is_user_present[0]: 
         user_data = reading_from_gsheets.get_user_data(is_user_present[1])
         print(user_data)
 
@@ -80,7 +91,9 @@ async def register(ctx, *, text): # "*" will take the full sentence
 
         await ctx.send(embed = embed)
 
-    else:
+    # If Not Registered till now
+    else: 
+        # Taking more information about user
         user.append(timestamp[0]) # Date
         user.append(timestamp[1]) # Time
         user.append(str(ctx.author))
@@ -90,8 +103,15 @@ async def register(ctx, *, text): # "*" will take the full sentence
         user.append(str(ctx.author.permissions_in))
         print(f"\nUser: {user}")
 
+        # Writing user details in sheets
         writing_in_gsheets.add_a_person(user)
 
+        # Giving user MEMBER role
+        member = ctx.author
+        role = discord.utils.get(member.guild.roles, name="MEMBER")
+        await member.add_roles(role)
+
+        # Creating embed
         embed = discord.Embed(
             title = "Woof! Registration completed",
             description = "**Your Details:**\n1. Name: " + user[0]
@@ -105,13 +125,9 @@ async def register(ctx, *, text): # "*" will take the full sentence
         )
         embed.set_thumbnail(url = user_avatar_url)
 
+        # Sending embed
         await ctx.send(embed = embed)
 
 
-@Husky.command()
-async def test(ctx):
-    x = reading_from_gsheets.is_available("hardik.kumar18feb@gmail.com")
-    print(x)
-
-
+#? Activate the bot(Husky)
 Husky.run(private_keys.discord_token)
