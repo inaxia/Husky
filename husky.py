@@ -6,8 +6,10 @@ import writing_in_gsheets
 from Private import private_keys
 
 
-#? Setting Prefix
-Husky = commands.Bot(command_prefix="!")
+#? Setting up Husky
+intents = discord.Intents.default()
+intents.members = True
+Husky = commands.Bot(command_prefix="!", intents=intents)
 
 
 #? Husky details
@@ -21,6 +23,18 @@ async def on_ready():
     husky_username = Husky.user
     husky_avatar_url = Husky.user.avatar_url
     print(f"\nHusky is ready \nusername: {husky_username} \navatar_url: {husky_avatar_url}")
+
+
+#? On Joining a new Member
+@Husky.event
+async def on_member_join(member):
+    print(f"{member} has joined")
+
+
+#? On Leaving a Member
+@Husky.event
+async def on_member_remove(member):
+    print(f"{member} has left")
 
 
 #? Basic Registration Inforation
@@ -127,6 +141,24 @@ async def register(ctx, *, text): # "*" will take the full sentence
 
         # Sending embed
         await ctx.send(embed = embed)
+
+
+#? Clearing messages
+@Husky.command()
+async def clear(ctx, ammount=2): # By default it'll delete 2 messages
+    await ctx.channel.purge(limit=ammount)
+
+
+#? Kick Member
+@Husky.command()
+async def kick(ctx, member: discord.member, *, reason=None):
+    await ctx.kick(reason=reason)
+
+
+#? Ban Member
+@Husky.command()
+async def ban(ctx, member: discord.member, *, reason=None):
+    await ctx.ban(reason=reason)
 
 
 #? Activate the bot(Husky)
